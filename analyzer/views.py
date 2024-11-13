@@ -35,12 +35,17 @@ def fetch_windy_data(request):
         if response.status_code == 200:
             data = response.json()
             time_from_timestamp = []
-            print(f"{data['ts']=}")
+            print(f"{data=}")
             for element in data['ts']:
                 time_from_timestamp.append(datetime.fromtimestamp(element / 1000))
             print(f"{time_from_timestamp=}")
 
-            return render(request, "windy.html", {"data": data})
+            return render(request, "windy.html", {
+                "time_from_timestamp": time_from_timestamp,
+                "wind_u_surface": data["wind_u-surface"],
+                "dewpoint_surface": data["dewpoint-surface"],
+                "pressure_surface": data["pressure-surface"],
+            })
         else:
             print(response.json())
             print(f"Błąd podczas pobierania danych: {response.status_code}")
