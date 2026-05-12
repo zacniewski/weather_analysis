@@ -138,4 +138,4 @@ weather_analysis/
 4. Click on **"Compare"** to see a side-by-side temperature comparison for the next 48 hours.
 
 ---
-*Created by Artur — Weather Analysis Tool © 2024*
+*Supervised by Artur — Weather Analysis Tool © 2024*
