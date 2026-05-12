@@ -1,0 +1,172 @@
+
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #d0e7f9;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: #0077be; /* Intensywniejszy niebieski pasek */
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header img {
+            width: 50px;
+            height: auto;
+        }
+
+        header i {
+            height: auto;
+            color: white;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        main {
+            flex: 1; /* Rozciąganie zawartości na dostępnej wysokości */
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff; /* Białe tło dla treści */
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        footer {
+            background-color: #0077be;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            margin-top: 20px;
+        }
+
+        .weather-banner {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .weather-banner img {
+            width: 80px;
+        }
+
+        .link-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .link-list a {
+            text-decoration: none;
+            color: #0077be;
+            background-color: #e6f3ff;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .link-list a:hover {
+            background-color: #0077be;
+            color: white;
+
+        }
+
+        table td {
+            text-align:center;
+        }
+
+        table {
+            border: 3px solid;  /* klasy z Bootstrapa mają wyższy priorytet niż te */
+            border-collapse: collapse;
+        }
+
+        /*
+
+
+        /* Poniżej style wycięte z index.html - do weryfikacji!!! */
+
+        /* Ogólne ustawienia */
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #e0f7fa; /* Jasny niebieski */
+            color: #333;
+        }
+
+        /* Pasek nawigacyjny */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #0077c2; /* Niebieski pasek */
+            color: white;
+            padding: 10px 20px;
+        }
+
+        .navbar-title h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .navbar-image img {
+            height: 50px;
+            width: auto;
+        }
+
+        /* Główna zawartość */
+        .main-content {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .main-content h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .links-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .links-list li {
+            margin: 10px 0;
+        }
+
+        .links-list a {
+            text-decoration: none;
+            color: #0077c2;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        .links-list a:hover {
+            color: #005495; /* Ciemniejszy niebieski na hover */
+        }
+
+        /* Stopka */
+        .footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #004a82; /* Ciemniejszy niebieski */
+            color: white;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }

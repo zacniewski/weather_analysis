@@ -5,7 +5,7 @@
 
     <h3 class="text-center mb-2 mt-2">Dane dla m. <u>{{ city|default:"Nieznane" }}</u></h3>
 
-    <form action="{% url 'analyzer:weather_api' %}" class="w-75 srodkowy mb-4">
+    <form action="{% url 'analyzer:virtualcrossing' %}" class="w-75 srodkowy mb-4">
         <div class="row">
             <div class="col-md-12 mb-3">
                 <label for="localization_query">Lokalizacja</label>
@@ -20,7 +20,7 @@
             </div>
         </div>
         <div class="mt-3 mb-3 text-center">
-            <button type="submit" class="btn btn-primary">Pobierz dane z WeatherAPI</button>
+            <button type="submit" class="btn btn-primary">Pobierz dane z VirtualCrossing</button>
         </div>
     </form>
 
@@ -29,7 +29,8 @@
         <thead>
             <tr>
                 <th>Nr</th>
-                <th>Data i czas</th>
+                <th>Data</th>
+                <th>Godzina</th>
                 <th>Temperatura (°C)</th>
                 <th>Opady (mm)</th>
                 <th>Wilgotność (%)</th>
@@ -44,7 +45,8 @@
             {% for entry in forecast_data %}
             <tr>
                 <td>{{ forloop.counter }}</td>
-                <td>{{ entry.time }}</td>
+                <td>{{ entry.date }}</td>
+                <td>{{ entry.time|slice:"0:5" }}</td>
                 <td>{{ entry.temperature }}</td>
                 <td>{{ entry.precipitation }}</td>
                 <td>{{ entry.humidity }}</td>
