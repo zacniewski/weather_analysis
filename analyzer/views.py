@@ -2,18 +2,15 @@ import os
 import json
 import math
 import urllib.request
-from collections import defaultdict
 from datetime import datetime, timedelta
 from urllib.parse import quote
 
 import python_weather
 import requests
-from dateutil.parser import parse
 from dotenv import load_dotenv
 from geopy.geocoders import Nominatim
 from open_meteo import OpenMeteo
 from open_meteo.models import DailyParameters, HourlyParameters
-from weatherapi import WeatherPoint
 from weatherbit.api import Api
 
 from django.shortcuts import render
@@ -26,6 +23,7 @@ loc = Nominatim(user_agent="Geopy Library")
 def index(request):
     return render(request, "index.html")
 
+
 def fetch_windy_data(request):
     API_KEY = os.getenv("WINDY_API_KEY")
     API_URL = "https://api.windy.com/api/point-forecast/v2"
@@ -37,7 +35,6 @@ def fetch_windy_data(request):
     query = request.GET.get("localization_query")
     print(f"{query=}")
     getLoc = loc.geocode(query)
-
 
     if getLoc:
         print(f"{getLoc=}")
@@ -68,12 +65,9 @@ def fetch_windy_data(request):
             for element, dewpoint, rh in zip(
                 data["ts"], data["dewpoint-surface"], data["rh-surface"]
             ):
-
                 time_from_timestamp.append(datetime.fromtimestamp(element / 1000))
 
-                dewpoint_celsius = (
-                    dewpoint - 273.15
-                )
+                dewpoint_celsius = dewpoint - 273.15
                 a = 17.625
                 b = 243.04
                 alpha = math.log(rh / 100) + (a * dewpoint_celsius) / (
@@ -93,7 +87,7 @@ def fetch_windy_data(request):
                     "rh_surface": data["rh-surface"],
                     "temperatura": temperatura,
                     "query": query,
-                    "adres": getLoc.address
+                    "adres": getLoc.address,
                 },
             )
         else:
@@ -159,7 +153,11 @@ def fetch_weatherapp_data(request):
         return render(
             request,
             "openweathermap.html",
-            {"forecast_data": None, "city": city, "error": "Błąd pobierania danych z API"}
+            {
+                "forecast_data": None,
+                "city": city,
+                "error": "Błąd pobierania danych z API",
+            },
         )
 
 
@@ -241,16 +239,16 @@ async def getweather(request):
                         "temperature": round(
                             (hourly.temperature - 32) * 5 / 9, 2
                         ),  # Fahrenheit -> Celsius
-                        "wind_speed": getattr(
-                            hourly, "wind_speed", "N/A"
-                        ),
+                        "wind_speed": getattr(hourly, "wind_speed", "N/A"),
                         "pressure": (
                             round(getattr(hourly, "pressure", 0) * 33.8639, 2)
                             if hasattr(hourly, "pressure")
                             else "N/A"
                         ),  # inHg -> hPa
                         "humidity": getattr(hourly, "humidity", "N/A"),  # Wilgotność
-                        "precipitation": getattr(hourly, "precipitation", "N/A"),  # Opady
+                        "precipitation": getattr(
+                            hourly, "precipitation", "N/A"
+                        ),  # Opady
                         "description": hourly.description,
                     }
                     daily_data["hourly"].append(hourly_data)
@@ -266,7 +264,7 @@ async def getweather(request):
                 },
             )
 
-        except Exception as e:
+        except Exception:
             return render(
                 request,
                 "error.html",
@@ -302,7 +300,9 @@ async def fetch_open_meteo_data(request):
         return render(
             request,
             "error.html",
-            {"message": f"Nie udało się pobrać współrzędnych dla lokalizacji: {query}. Spróbuj ponownie."},
+            {
+                "message": f"Nie udało się pobrać współrzędnych dla lokalizacji: {query}. Spróbuj ponownie."
+            },
         )
 
     try:
@@ -351,7 +351,9 @@ async def fetch_open_meteo_data(request):
         return render(
             request,
             "error.html",
-            {"message": f"Nie udało się pobrać prognozy pogody dla lokalizacji: {query}. Spróbuj ponownie."},
+            {
+                "message": f"Nie udało się pobrać prognozy pogody dla lokalizacji: {query}. Spróbuj ponownie."
+            },
         )
 
 
@@ -399,7 +401,7 @@ def fetch_weatherbit_data(request):
 
 def fetch_virtualcrossing_data(request):
     BaseURL = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/"
-    ApiKey = "PZ7J682SJRRNLFDVJ3F4GRGXL"
+    ApiKey = os.getenv("VIRTUALCROSSING_API_KEY")
     UnitGroup = "metric"
 
     Location = request.GET.get("localization_query", "Gdynia")
@@ -427,7 +429,8 @@ def fetch_virtualcrossing_data(request):
         for day in forecast_data.get("days", []):
             for hour in day.get("hours", []):
                 hourly_forecast_data.append(
-                    {   "date": day["datetime"],
+                    {
+                        "date": day["datetime"],
                         "time": hour["datetime"],
                         "temperature": hour["temp"],
                         "precipitation": hour.get("precip", 0),
@@ -455,7 +458,9 @@ def fetch_virtualcrossing_data(request):
         return render(request, "error.html", {"message": "Błąd po stronie API."})
     except urllib.error.URLError as e:
         print(f"URL Error: {e.reason}")
-        return render(request, "error.html", {"message": "Nie można połączyć się z API."})
+        return render(
+            request, "error.html", {"message": "Nie można połączyć się z API."}
+        )
 
 
 async def compare_temperatures(request):
@@ -471,18 +476,18 @@ async def compare_temperatures(request):
         def standardize_time(time_str):
             """Convert various time formats to standard 'YYYY-MM-DD HH:00' format"""
             if isinstance(time_str, datetime):
-                return time_str.strftime('%Y-%m-%d %H:00')
+                return time_str.strftime("%Y-%m-%d %H:00")
 
             time_str = str(time_str).strip()
 
             try:
                 formats = [
-                    '%Y-%m-%d %H:%M',
-                    '%Y-%m-%d %H:%M:%S',
-                    '%Y-%m-%d %H:%M:%S:%S',
-                    '%Y-%m-%d %H:00',
-                    '%Y-%m-%d %H',
-                    '%Y-%m-%dT%H:%M:%S'
+                    "%Y-%m-%d %H:%M",
+                    "%Y-%m-%d %H:%M:%S",
+                    "%Y-%m-%d %H:%M:%S:%S",
+                    "%Y-%m-%d %H:00",
+                    "%Y-%m-%d %H",
+                    "%Y-%m-%dT%H:%M:%S",
                 ]
 
                 parsed_time = None
@@ -494,7 +499,7 @@ async def compare_temperatures(request):
                         continue
 
                 if parsed_time:
-                    return parsed_time.strftime('%Y-%m-%d %H:00')
+                    return parsed_time.strftime("%Y-%m-%d %H:00")
                 return time_str
             except Exception:
                 return time_str
@@ -504,16 +509,16 @@ async def compare_temperatures(request):
 
             if std_time not in comparison_data:
                 comparison_data[std_time] = {
-                    'hour': std_time,
-                    'windy_temp': None,
-                    'openweather_temp': None,
-                    'weatherapi_temp': None,
-                    'python_weather_temp': None,
-                    'open_meteo_temp': None,
-                    'weatherbit_temp': None,
-                    'virtualcrossing_temp': None
+                    "hour": std_time,
+                    "windy_temp": None,
+                    "openweather_temp": None,
+                    "weatherapi_temp": None,
+                    "python_weather_temp": None,
+                    "open_meteo_temp": None,
+                    "weatherbit_temp": None,
+                    "virtualcrossing_temp": None,
                 }
-            comparison_data[std_time][f'{source}_temp'] = temp
+            comparison_data[std_time][f"{source}_temp"] = temp
 
         # Windy
         API_KEY = os.getenv("WINDY_API_KEY")
@@ -533,15 +538,17 @@ async def compare_temperatures(request):
         if response.status_code == 200:
             data = response.json()
             for element, dewpoint, rh in zip(
-                    data["ts"], data["dewpoint-surface"], data["rh-surface"]
+                data["ts"], data["dewpoint-surface"], data["rh-surface"]
             ):
                 time = datetime.fromtimestamp(element / 1000)
                 dewpoint_celsius = dewpoint - 273.15
                 a = 17.625
                 b = 243.04
-                alpha = math.log(rh / 100) + (a * dewpoint_celsius) / (b + dewpoint_celsius)
+                alpha = math.log(rh / 100) + (a * dewpoint_celsius) / (
+                    b + dewpoint_celsius
+                )
                 temp_celsius = (b * alpha) / (a - alpha)
-                update_data(time, 'windy', round(temp_celsius, 2))
+                update_data(time, "windy", round(temp_celsius, 2))
     except Exception as e:
         print(f"Error getting data from Windy: {e}")
 
@@ -556,7 +563,7 @@ async def compare_temperatures(request):
             for entry in data["list"]:
                 hour_str = entry["dt_txt"]
                 temp = round(entry["main"]["temp"] - 273.15, 2)
-                update_data(hour_str, 'openweather', temp)
+                update_data(hour_str, "openweather", temp)
     except Exception as e:
         print(f"Error getting data from OpenWeatherMap: {e}")
 
@@ -572,7 +579,7 @@ async def compare_temperatures(request):
                 for hour in day["hour"]:
                     hour_str = hour["time"]
                     temp = hour["temp_c"]
-                    update_data(hour_str, 'weatherapi', temp)
+                    update_data(hour_str, "weatherapi", temp)
     except Exception as e:
         print(f"Error getting data from WeatherAPI: {e}")
 
@@ -598,12 +605,12 @@ async def compare_temperatures(request):
                             month=correct_date.month,
                             day=correct_date.day,
                             hour=hour,
-                            minute=minute
+                            minute=minute,
                         )
 
-                        hour_str = corrected_time.strftime('%Y-%m-%d %H:00')
+                        hour_str = corrected_time.strftime("%Y-%m-%d %H:00")
                         temp = round(hourly.temperature, 2)
-                        update_data(hour_str, 'python_weather', temp)
+                        update_data(hour_str, "python_weather", temp)
                 day_index += 1
     except Exception as e:
         print(f"Error getting data from Python Weather: {e}")
@@ -614,11 +621,13 @@ async def compare_temperatures(request):
             forecast = await open_meteo.forecast(
                 latitude=getLoc.latitude,
                 longitude=getLoc.longitude,
-                hourly=[HourlyParameters.TEMPERATURE_2M]
+                hourly=[HourlyParameters.TEMPERATURE_2M],
             )
 
-            for i, (time, temp) in enumerate(zip(forecast.hourly.time, forecast.hourly.temperature_2m)):
-                update_data(time, 'open_meteo', temp)
+            for i, (time, temp) in enumerate(
+                zip(forecast.hourly.time, forecast.hourly.temperature_2m)
+            ):
+                update_data(time, "open_meteo", temp)
     except Exception as e:
         print(f"Error getting data from Open-Meteo: {e}")
 
@@ -634,7 +643,7 @@ async def compare_temperatures(request):
         for entry in series:
             hour_str = entry[0]
             temp = entry[1]
-            update_data(hour_str, 'weatherbit', temp)
+            update_data(hour_str, "weatherbit", temp)
     except Exception as e:
         print(f"Error getting data from Weatherbit: {e}")
 
@@ -653,21 +662,22 @@ async def compare_temperatures(request):
             for hour in day.get("hours", []):
                 hour_str = f"{day['datetime']} {hour['datetime']}"
                 temp = hour["temp"]
-                update_data(hour_str, 'virtualcrossing', temp)
+                update_data(hour_str, "virtualcrossing", temp)
     except Exception as e:
         print(f"Error getting data from Visual Crossing: {e}")
 
     comparison_data_list = list(comparison_data.values())
-    comparison_data_list.sort(key=lambda x: x['hour'])
+    comparison_data_list.sort(key=lambda x: x["hour"])
 
     return render(
         request,
-        'compare_temperatures.html',
+        "compare_temperatures.html",
         {
-            'comparison_data': comparison_data_list,
-            'query': query,
-        }
+            "comparison_data": comparison_data_list,
+            "query": query,
+        },
     )
+
 
 def about(request):
     return render(request, "about.html")

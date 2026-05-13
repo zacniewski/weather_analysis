@@ -3,14 +3,14 @@
 {% load indexing %}
 
 {% block content %}
-    
+
     {%  if query %}
         <h3 class="text-center mb-2 mt-2">Dane dla m. <u>{{ query|title }}</u></h3>
         <h5 class="text-center mb-2 mt-2">Adres: {{ adres }} </h5>
     {% else %}
         <h3 class="text-center mb-2 mt-2">Dane dla m. <u> Gdynia </u></h3>
     {%  endif %}
-    
+
     <form action="{%  url 'analyzer:windy' %}" class="w-75 srodkowy mb-4">
           <div class="row">
               <div class="col-md-12 mb-3">
@@ -31,8 +31,8 @@
                     <button type="submit" class="btn btn-primary">Pobierz dane z Windy</button>
           </div>
     </form>
-    
-    <table class="table table-striped table-bordered border-primary table-hover w-75"> 
+
+    <table class="table table-striped table-bordered border-primary table-hover w-75">
       <tr>
         <th>Nr</th>
         <th>Data i czas</th>
@@ -42,7 +42,7 @@
         <th>Wilgotność</th>
         <th>Temperatura</th>
       </tr>
-    
+
       {% for t in time_from_timestamp %}
         <tr>
           <td>{{ forloop.counter }}</td>
@@ -54,11 +54,11 @@
           <td>{{ temperatura|index:forloop.counter0|floatformat:2 }} °C</td>
         </tr>
       {% endfor %}
-    
+
     </table>
-    
+
     <div class="text-center">
         <a href="{% url 'analyzer:index' %}" class="btn btn-secondary srodkowy mb-3" role="button" aria-disabled="true">Początek</a>
     </div>
-    
+
 {% endblock content %}
